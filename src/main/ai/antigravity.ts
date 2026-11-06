@@ -141,9 +141,13 @@ export function openAgyInteractive(initialArg?: string): { ok: boolean; message:
   const child = spawn('cmd.exe', args, { detached: true, stdio: 'ignore' });
   child.on('error', () => undefined);
   child.unref();
+  // `start` resolves once the terminal is launched, not once agy has run the command, and agy may
+  // treat a slash argument as a prompt rather than a slash command. Tell the user the fallback so a
+  // sign-out can never silently do nothing.
+  const command = initialArg === '/logout' ? 'If /logout did not run by itself, type /logout and press Enter. ' : '';
   return {
     ok: true,
-    message: `Terminal opened with Antigravity ${initialArg ?? ''}. When done, close it and return here.`,
+    message: `A terminal opened with Antigravity. ${command}When you are done there, close the window and press Connect Google to sign in with another account.`,
   };
 }
 

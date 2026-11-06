@@ -17,6 +17,7 @@
     "demo:diagram": "npm run build && electron . --demo=diagram",
     "demo:3d": "npm run build && electron . --demo=3d",
     "demo:ui": "npm run build && electron . --demo=ui",
+    "visual": "npm run build && node scripts/visual-harness.mjs",
     "dist": "npm run build && electron-builder --win"
   },
   "devDependencies": {

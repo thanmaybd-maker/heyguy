@@ -158,7 +158,9 @@ function createOverlay(): void {
   });
   overlay.setAlwaysOnTop(true, 'screen-saver');
   overlay.setIgnoreMouseEvents(true, { forward: true });
-  overlay.loadFile(path.join(DIST, 'renderer', 'overlay', 'index.html'));
+  // The fixture harness loads ?still=1 so 3D rendering is deterministic (no auto-rotate, t frozen at 0).
+  const fixtureQuery = process.env.HEYGUY_FIXTURES ? { query: { still: '1' } } : undefined;
+  overlay.loadFile(path.join(DIST, 'renderer', 'overlay', 'index.html'), fixtureQuery);
   overlay.once('ready-to-show', () => overlay?.showInactive());
   overlay.on('closed', () => {
     overlay = null;
@@ -1180,6 +1182,82 @@ function snapshotMode(dir: string): void {
   );
 }
 
+// ---------------------------------------------------------------- visual fixture harness
+
+interface FixtureCapture {
+  name: string;
+  sceneId: string;
+  kind: Scene['kind'];
+  rect: { x: number; y: number; width: number; height: number } | null;
+  pngBytes: number;
+  /** 64x64 thumbnail, base64. scripts/visual-harness.mjs compares this between runs. */
+  thumb: string;
+  stats: {
+    triangles: number;
+    drawCalls: number;
+    geometries: number;
+    textures: number;
+    parts: number;
+    fps: number;
+  } | null;
+}
+
+const FIXTURE_SCENES: { name: string; demo: unknown; settle: number }[] = [
+  { name: '3d-engine', demo: DEMO_ENGINE, settle: 1800 },
+  { name: '3d-f22', demo: DEMO_F22, settle: 1800 },
+  { name: '2d-diagram', demo: DEMO_DIAGRAM, settle: 800 },
+  { name: 'ui-dashboard', demo: DEMO_UI, settle: 800 },
+];
+
+/**
+ * HEYGUY_FIXTURES=<dir>: render every shipped scene demo with the deterministic overlay
+ * (`?still=1`), save one PNG per scene plus report.json (render stats + thumbnails), then quit.
+ * `npm run visual` runs this and diffs the thumbnails against the saved baseline.
+ */
+function fixtureMode(dir: string): void {
+  mkdirSync(dir, { recursive: true });
+  overlay?.webContents.once('did-finish-load', async () => {
+    const captures: FixtureCapture[] = [];
+    for (const fixture of FIXTURE_SCENES) {
+      // Same validation path as real model output, so a fixture can never bypass the schema.
+      const parsed = parseSceneJSON(JSON.stringify(fixture.demo));
+      if (!parsed.ok) {
+        console.warn(`[fixtures] ${fixture.name} rejected: ${parsed.errors.join('; ')}`);
+        continue;
+      }
+      send({ type: 'scene', scene: parsed.scene, warnings: parsed.warnings });
+      await new Promise((resolve) => setTimeout(resolve, fixture.settle));
+      const win = overlay;
+      if (!win) break;
+      const raw = (await win.webContents.executeJavaScript(
+        `(() => { const el = document.getElementById('scene-panel'); if (!el) return null; const r = el.getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height }; })()`,
+      )) as FixtureCapture['rect'];
+      const rect = raw && raw.width > 20 && raw.height > 20
+        ? { x: Math.round(raw.x), y: Math.round(raw.y), width: Math.round(raw.width), height: Math.round(raw.height) }
+        : null;
+      const image = rect ? await win.webContents.capturePage(rect) : await win.webContents.capturePage();
+      const png = image.toPNG();
+      writeFileSync(path.join(dir, `${fixture.name}.png`), png);
+      const thumb = image.resize({ width: 64, height: 64 }).toBitmap();
+      const stats = parsed.scene.kind === '3d'
+        ? ((await win.webContents.executeJavaScript('window.__heyguy3d ?? null')) as FixtureCapture['stats'])
+        : null;
+      captures.push({
+        name: fixture.name,
+        sceneId: parsed.scene.id,
+        kind: parsed.scene.kind,
+        rect,
+        pngBytes: png.length,
+        thumb: thumb.toString('base64'),
+        stats,
+      });
+    }
+    writeFileSync(path.join(dir, 'report.json'), JSON.stringify({ generatedAt: new Date().toISOString(), captures }, null, 2));
+    console.log(`[fixtures] wrote ${captures.length} captures + report.json to ${dir}`);
+    app.quit();
+  });
+}
+
 // ---------------------------------------------------------------- brain + notch
 
 let brainStatus: BrainStatus = 'connecting';
@@ -1400,7 +1478,7 @@ if (!app.requestSingleInstanceLock()) {
     createOverlay();
     overlay?.webContents.once('did-finish-load', () => {
       pushNotch();
-      if (!process.env.HEYGUY_SNAPSHOT) void connectBrain();
+      if (!process.env.HEYGUY_SNAPSHOT && !process.env.HEYGUY_FIXTURES) void connectBrain();
     });
     createTray();
     const taken = registerHotkeys();
@@ -1412,10 +1490,12 @@ if (!app.requestSingleInstanceLock()) {
     });
 
     const snap = process.env.HEYGUY_SNAPSHOT;
+    const fixtures = process.env.HEYGUY_FIXTURES;
     // --demo, --demo=diagram, --demo=3d, --demo=ui
     const demoFlag = process.argv.find((a) => a === '--demo' || a.startsWith('--demo='));
     const demoArg: DemoKind | null = demoFlag ? ((['pointing', 'diagram', '3d', 'ui', 'jet'] as const).find((k) => demoFlag === `--demo=${k}`) ?? 'pointing') : null;
-    if (snap) snapshotMode(snap);
+    if (fixtures) fixtureMode(fixtures);
+    else if (snap) snapshotMode(snap);
     else if (demoArg) overlay?.webContents.once('did-finish-load', () => setTimeout(() => void runDemo(demoArg), 600));
     else if (process.argv.includes('--settings')) {
       openSettings();

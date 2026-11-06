@@ -107,3 +107,39 @@ test('normalise3D rescales a microscopic assembly into the usable range, keeping
   assert.ok(n.animations[0]!.amount > 0.01);
 });
 
+test('normalise3D recentres y/z but keeps a mirrored pair symmetric across x = 0', () => {
+  const s = scene3d({
+    kind: '3d',
+    title: 'mirror-far',
+    parts: [part('body', [0, 10, 0], [1, 1, 4]), part('wing', [1.5, 10, 0], [2, 0.2, 1], { mirror: 'x' })],
+  });
+  const n = normalise3D(s);
+  const base = n.parts.find((p) => p.id === 'wing')!;
+  const twin = n.parts.find((p) => p.mirrored)!;
+  assert.ok(Math.abs(twin.position[0] + base.position[0]) < 1e-9, JSON.stringify([base.position, twin.position]));
+  // the mirror plane is still x = 0 and the assembly no longer floats above the origin
+  assert.ok(Math.abs(twin.position[0]) > 0.1);
+  const after = lint3D(n);
+  assert.ok(!after.issues.some((i) => i.code === 'off-origin'), JSON.stringify(after.issues));
+  assert.equal(after.stats.components, 1);
+});
+
+test('normalise3D scales extrude/lathe outline points, not only part positions', () => {
+  const s = scene3d({
+    kind: '3d',
+    title: 'micro-outline',
+    parts: [
+      { id: 'plate', label: 'plate', shape: 'extrude', size: [0.02, 0], points: [[0, 0], [0.1, 0], [0.1, 0.1]], position: [0, 0, 0] },
+      { id: 'cone', label: 'cone', shape: 'lathe', size: [], points: [[0.001, 0], [0.05, 0.02]], position: [0.02, 0, 0] },
+    ],
+  });
+  const n = normalise3D(s);
+  const plate = n.parts.find((p) => p.id === 'plate')!;
+  const cone = n.parts.find((p) => p.id === 'cone')!;
+  const plateX = Math.max(...(plate.points ?? []).map(([x]) => x));
+  const coneR = Math.max(...(cone.points ?? []).map(([r]) => r));
+  assert.ok(plateX > 0.1 * 5, `expected scaled outline, got ${plateX}`);
+  assert.ok(coneR > 0.05 * 5, `expected scaled lathe profile, got ${coneR}`);
+  assert.ok(Math.abs(lint3D(n).stats.diagonal - 6) < 0.05, String(lint3D(n).stats.diagonal));
+});
+
