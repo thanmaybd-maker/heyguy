@@ -1,0 +1,210 @@
+// Example scenes used by the tray demos and visual tests. They go through the
+// same JSON → validation → renderer path as model output.
+
+export const DEMO_DIAGRAM = {
+  kind: '2d',
+  id: 'transformer',
+  title: 'How a transformer works',
+  layout: 'flow-right',
+  nodes: [
+    { id: 'text', label: 'Your text', detail: 'The prompt, e.g. “The cat sat on the”.', shape: 'note' },
+    { id: 'tok', label: 'Tokenizer', detail: 'Splits text into tokens (word pieces) and maps each to an ID.', shape: 'pill' },
+    { id: 'emb', label: 'Embeddings + position', detail: 'Each token ID becomes a vector; positional information is added so order matters.', shape: 'box' },
+    { id: 'attn', label: 'Self-attention', detail: 'Every token scores how relevant every other token is, then mixes their information by those scores.', shape: 'box', tone: 'accent' },
+    { id: 'ffn', label: 'Feed-forward', detail: 'A small neural network applied to each token separately, adding non-linear processing.', shape: 'box' },
+    { id: 'stack', label: '× N layers', detail: 'Attention + feed-forward blocks are stacked many times (dozens in large models).', shape: 'diamond', tone: 'muted' },
+    { id: 'out', label: 'Next-token probabilities', detail: 'A final layer scores every possible next token; the model samples one and repeats.', shape: 'pill', tone: 'good' },
+  ],
+  edges: [
+    { from: 'text', to: 'tok', flow: true },
+    { from: 'tok', to: 'emb', flow: true },
+    { from: 'emb', to: 'attn', flow: true, label: 'vectors' },
+    { from: 'attn', to: 'ffn', flow: true },
+    { from: 'ffn', to: 'stack', flow: true },
+    { from: 'stack', to: 'attn', dashed: true, label: 'repeat' },
+    { from: 'stack', to: 'out', flow: true },
+  ],
+  steps: [
+    { caption: 'Text is split into tokens.', focus: ['text', 'tok'] },
+    { caption: 'Tokens become vectors that know their position.', focus: ['emb'] },
+    { caption: 'Attention lets every token look at every other token.', focus: ['attn'] },
+    { caption: 'This repeats over many layers.', focus: ['ffn', 'stack'] },
+    { caption: 'The model predicts the next token.', focus: ['out'] },
+  ],
+};
+
+export const DEMO_ENGINE = {
+  kind: '3d',
+  id: 'engine',
+  title: 'Single-cylinder engine',
+  parts: [
+    { id: 'block', label: 'Cylinder', detail: 'The bore the piston slides in. Shown see-through so you can watch the piston.', shape: 'cylinder', size: [0.62, 1.7], position: [0, 1.15, 0], color: '#94A3B8', opacity: 0.25 },
+    { id: 'head', label: 'Cylinder head', detail: 'Seals the top of the cylinder and holds the valves and spark plug.', shape: 'box', size: [1.5, 0.3, 1.5], position: [0, 2.15, 0], color: '#64748B' },
+    { id: 'plug', label: 'Spark plug', detail: 'Makes the spark that ignites the compressed fuel-air mixture, pushing the piston down.', shape: 'cylinder', size: [0.08, 0.5], position: [0, 2.5, 0], color: '#F8FAFC' },
+    { id: 'intake', label: 'Intake valve', detail: 'Opens to let the fuel-air mixture in on the intake stroke.', shape: 'cylinder', size: [0.06, 0.55], position: [-0.35, 2.35, 0], color: '#34D399' },
+    { id: 'exhaust', label: 'Exhaust valve', detail: 'Opens to push burnt gases out on the exhaust stroke.', shape: 'cylinder', size: [0.06, 0.55], position: [0.35, 2.35, 0], color: '#F87171' },
+    { id: 'piston', label: 'Piston', detail: 'Slides up to compress the mixture; the explosion forces it down. This linear motion is what powers the engine.', shape: 'cylinder', size: [0.55, 0.45], position: [0, 1.3, 0], color: '#60A5FA' },
+    { id: 'rod', label: 'Connecting rod', detail: 'Links the piston to the crankshaft and turns up-down motion into rotation.', shape: 'box', size: [0.16, 1.2, 0.12], position: [0, 0.5, 0], color: '#FBBF24' },
+    { id: 'crank', label: 'Crankshaft', detail: 'The rotating shaft. Its offset pin makes the rod push it round — this is the engine’s output.', shape: 'cylinder', size: [0.18, 1.8], position: [0, -0.2, 0], rotation: [90, 0, 0], color: '#A78BFA' },
+    { id: 'flywheel', label: 'Flywheel', detail: 'A heavy wheel that stores momentum so the engine keeps turning smoothly between power strokes.', shape: 'cylinder', size: [0.85, 0.16], position: [0, -0.2, 1.0], rotation: [90, 0, 0], color: '#F472B6' },
+  ],
+  animations: [
+    { part: 'piston', kind: 'slide', axis: 'y', amount: 0.35, speed: 0.7 },
+    { part: 'rod', kind: 'swing', axis: 'z', amount: 14, speed: 0.7, phase: 0.25 },
+    { part: 'crank', kind: 'spin', axis: 'y', amount: 0.7 },
+    { part: 'flywheel', kind: 'spin', axis: 'y', amount: 0.7 },
+    { part: 'intake', kind: 'slide', axis: 'y', amount: 0.06, speed: 0.35 },
+    { part: 'exhaust', kind: 'slide', axis: 'y', amount: 0.06, speed: 0.35, phase: 0.5 },
+  ],
+  steps: [
+    { caption: 'Intake: the piston moves down and the intake valve lets fuel and air in.', focus: ['piston', 'intake'] },
+    { caption: 'Compression: the piston moves up, squeezing the mixture.', focus: ['piston', 'block'] },
+    { caption: 'Power: the spark plug fires and the blast pushes the piston down.', focus: ['plug', 'piston'] },
+    { caption: 'The connecting rod turns that push into crankshaft rotation.', focus: ['rod', 'crank'] },
+    { caption: 'Exhaust: burnt gas leaves through the exhaust valve; the flywheel keeps things turning.', focus: ['exhaust', 'flywheel'] },
+  ],
+};
+
+export const DEMO_UI = {
+  kind: 'ui',
+  id: 'system-harness',
+  title: 'AI Inference & Latency Harness',
+  subtitle: 'Interactive Shadcn-style telemetry, model comparison & parameter simulator',
+  layout: 'dashboard',
+  widgets: [
+    {
+      id: 'ttft',
+      kind: 'metric',
+      label: 'First Token Latency (p95)',
+      detail: '95th percentile time-to-first-token across streaming SSE vision calls.',
+      tone: 'good',
+      span: 1,
+      value: '412 ms',
+      delta: '-18.4% faster',
+      trend: 'up',
+      progress: 86,
+      badge: 'Optimal',
+    },
+    {
+      id: 'throughput',
+      kind: 'metric',
+      label: 'Token Stream Throughput',
+      detail: 'Sustained output generation speed across active reasoning turns.',
+      tone: 'accent',
+      span: 1,
+      value: '128 tok/s',
+      delta: '+24.0% burst',
+      trend: 'up',
+      progress: 92,
+      badge: 'Live SSE',
+    },
+    {
+      id: 'bench',
+      kind: 'chart',
+      label: 'Provider Vision & UI Harness Speed (tok/s)',
+      detail: 'Comparison of streaming generation speed across configured providers.',
+      tone: 'default',
+      span: 2,
+      chartType: 'bar',
+      unit: 'tok/s',
+      series: [
+        { label: 'Gemini 2.5 Flash', value: 142, color: '#38bdf8' },
+        { label: 'DeepSeek V3 / R1', value: 128, color: '#818cf8' },
+        { label: 'GPT-4o Vision', value: 108, color: '#34d399' },
+        { label: 'Claude Sonnet', value: 94, color: '#f59e0b' },
+      ],
+    },
+    {
+      id: 'tuner',
+      kind: 'slider',
+      label: 'Context Window Cost Estimator',
+      detail: 'Interactive simulator: drag to estimate token budget per 100 vision turns.',
+      tone: 'accent',
+      span: 2,
+      min: 1,
+      max: 50,
+      step: 1,
+      initial: 12,
+      multiplier: 0.15,
+      unit: 'USD / day',
+      formulaLabel: 'Estimated Cost',
+      body: 'Drag the slider to simulate daily high-resolution screen + scene turns.',
+    },
+    {
+      id: 'matrix',
+      kind: 'comparison',
+      label: 'Architecture Route Comparison',
+      detail: 'Side-by-side comparison of Declarative SceneUI vs Raw Code Eval.',
+      tone: 'good',
+      span: 2,
+      leftTitle: 'Declarative SceneUI (Ours)',
+      rightTitle: 'Arbitrary Eval / Unchecked DOM',
+      items: [
+        { label: 'Security Boundary', value: 'Strict Schema + Sandboxed', rightValue: 'XSS / IPC Escalation Risk', tone: 'good' },
+        { label: 'Layout Determinism', value: 'Zero Overlap Grid', rightValue: 'Unpredictable Overflow', tone: 'good' },
+        { label: 'Click-to-Ask Context', value: 'Native PickedItem Binding', rightValue: 'Manual / Disconnected', tone: 'accent' },
+      ],
+    },
+    {
+      id: 'snippet',
+      kind: 'code',
+      label: 'Validated Scene Envelope',
+      detail: 'Every visual block is validated before reaching the renderer.',
+      tone: 'muted',
+      span: 2,
+      language: 'typescript',
+      code: `const res = parseSceneJSON(block);\nif (res.ok) {\n  send({ type: 'scene', scene: res.scene, warnings: res.warnings }, turn);\n}`,
+    },
+  ],
+  steps: [
+    { caption: 'Live KPI cards track streaming latency and token throughput.', focus: ['ttft', 'throughput'] },
+    { caption: 'Interactive charts compare provider performance — click any bar to inspect.', focus: ['bench'] },
+    { caption: 'Drag the interactive slider to simulate token budgets in real time.', focus: ['tuner'] },
+    { caption: 'Compare architectural tradeoffs and copy validated code snippets.', focus: ['matrix', 'snippet'] },
+  ],
+};
+
+/**
+ * F-22 Raptor, schematic. Built only from the scene vocabulary the model also
+ * gets (extrude outlines, ellipsoids, mirror) so it doubles as a capability test
+ * and as the worked example in the prompt. Nose points to +z, y is up.
+ */
+export const DEMO_F22 = {
+  kind: '3d',
+  id: 'f22',
+  title: 'F-22 Raptor',
+  parts: [
+    {
+      id: 'body', label: 'Fuselage', shape: 'extrude', size: [0.24, 0.05], position: [0, 0, 0], color: '#8A929B',
+      points: [[0, 2.05], [0.14, 1.45], [0.3, 0.75], [0.44, 0.2], [0.46, -1.45], [0.3, -1.82], [-0.3, -1.82], [-0.46, -1.45], [-0.44, 0.2], [-0.3, 0.75], [-0.14, 1.45]],
+      detail: 'A flat, blended body with sharp chines along its edges. The faceted shape scatters radar waves away from the radar that sent them.',
+    },
+    { id: 'spine', label: 'Upper spine', shape: 'ellipsoid', size: [0.24, 0.12, 1.45], position: [0, 0.12, 0.15], color: '#7E8690', detail: 'Holds the avionics and internal fuel. Weapons ride inside bays underneath so nothing sticks out to reflect radar.' },
+    { id: 'canopy', label: 'Canopy', shape: 'ellipsoid', size: [0.12, 0.1, 0.42], position: [0, 0.24, 1.0], color: '#D2A73C', opacity: 0.9, detail: 'A single bubble canopy with a gold-tinted coating that keeps radar from bouncing off the cockpit inside.' },
+    {
+      id: 'wing', label: 'Wing', shape: 'extrude', size: [0.05], position: [0, 0, 0], mirror: 'x', color: '#8F98A1',
+      points: [[0.42, 0.45], [1.62, -0.72], [1.62, -0.98], [1.0, -0.86], [0.44, -1.15]],
+      detail: 'Diamond-shaped wing: the leading edge sweeps back about 42° and the trailing edge sweeps forward. Every edge lines up with another edge, which keeps radar returns in a few narrow spikes.',
+    },
+    {
+      id: 'stab', label: 'Horizontal stabilizer', shape: 'extrude', size: [0.04], position: [0, 0, 0], mirror: 'x', color: '#858E97',
+      points: [[0.4, -1.3], [1.08, -1.74], [1.08, -1.97], [0.42, -1.9]],
+      detail: 'All-moving tail surfaces that pitch the nose up and down. Their edges are angled to match the wing.',
+    },
+    {
+      id: 'tail', label: 'Vertical tail', shape: 'extrude', size: [0.035], position: [0.34, 0.1, 0], rotation: [0, 0, 62], mirror: 'x', color: '#7C858F',
+      points: [[0, -0.98], [0.78, -1.42], [0.78, -1.7], [0, -1.76]],
+      detail: 'Twin tails canted outward about 28°. A vertical fin would reflect radar straight back to the side; canted fins send it away.',
+    },
+    { id: 'intake', label: 'Air intake', shape: 'wedge', size: [0.2, 0.2, 0.62], position: [0.55, -0.02, 0.35], mirror: 'x', color: '#69727C', detail: 'Caret-shaped intakes. Their S-shaped ducts hide the fan blades of the engines, which would otherwise light up on radar.' },
+    { id: 'nozzle', label: 'Thrust-vectoring nozzle', shape: 'box', size: [0.24, 0.13, 0.3], position: [0.17, 0, -1.95], mirror: 'x', color: '#3F454C', detail: 'Two-dimensional nozzles on the F119 engines can tilt the exhaust up or down by 20° for extra pitch control in tight turns.' },
+  ],
+  animations: [],
+  steps: [
+    { caption: 'The whole shape is designed to scatter radar, starting with the flat, edged fuselage.', focus: ['body', 'spine'] },
+    { caption: 'The gold-tinted canopy hides the cockpit from radar.', focus: ['canopy'] },
+    { caption: 'Diamond wings and matching tail edges keep reflections in narrow spikes.', focus: ['wing', 'stab'] },
+    { caption: 'Twin tails lean outward so they don’t reflect straight back.', focus: ['tail'] },
+    { caption: 'Hidden engine faces and vectoring nozzles: stealthy and very agile.', focus: ['intake', 'nozzle'] },
+  ],
+};

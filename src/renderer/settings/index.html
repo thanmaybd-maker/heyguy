@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'" />
+  <title>HeyGuy Settings</title>
+  <link rel="stylesheet" href="settings.css" />
+</head>
+
+<body>
+  <main>
+    <header class="hero">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h1>HeyGuy</h1>
+        <p class="sub">Your AI buddy that lives next to your cursor.</p>
+      </div>
+    </header>
+
+    <form id="form" novalidate>
+      <section class="card">
+        <h2>Brain</h2>
+        <p class="help">Which model looks at your screen and answers.</p>
+        <div class="seg" role="radiogroup" aria-label="Provider">
+          <label><input type="radio" name="provider" value="antigravity" /> <span>Antigravity (Google)</span></label>
+          <label><input type="radio" name="provider" value="anthropic" /> <span>Claude</span></label>
+          <label><input type="radio" name="provider" value="gemini" /> <span>Gemini</span></label>
+          <label><input type="radio" name="provider" value="openai" /> <span>OpenAI</span></label>
+          <label><input type="radio" name="provider" value="deepseek" /> <span>DeepSeek</span></label>
+        </div>
+
+        <div class="field google-harness-card">
+          <label for="antigravityModel" class="google-title">
+            Antigravity (Google account)
+            <span id="antigravityState" class="pill">checking…</span>
+          </label>
+          <p class="google-sub">HeyGuy runs your own, already signed-in Antigravity CLI (<code>agy</code>). Sign-in happens inside <code>agy</code>; HeyGuy never sees or stores your Google credentials. No API key needed.</p>
+
+          <div class="google-auth-bar">
+            <div class="google-account-chip">
+              <span class="google-avatar" id="googleAvatar">?</span>
+              <div class="google-account-meta">
+                <input id="googleAccountEmail" type="text" placeholder="Account label (optional)" autocomplete="off" spellcheck="false" aria-label="Google account label shown in HeyGuy" />
+                <span class="google-auth-mode" id="googleAuthModeLabel"></span>
+              </div>
+            </div>
+            <div class="google-actions">
+              <button type="button" class="google-btn" id="btnGoogleLogin">
+                <svg class="google-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/>
+                  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"/>
+                  <path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"/>
+                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/>
+                </svg>
+                <span>Sign in with Google (opens Antigravity)</span>
+              </button>
+              <button type="button" class="ghost" data-test="antigravity">Test</button>
+            </div>
+          </div>
+
+          <label for="antigravityModel" class="small">Model (list comes from <code>agy models</code>)</label>
+          <select id="antigravityModel">
+            <option value="gemini-3.8-flash-high">Gemini 3.8 Flash (High)</option>
+            <option value="gemini-3.8-flash-medium">Gemini 3.8 Flash (Medium)</option>
+            <option value="gemini-3.8-flash-low">Gemini 3.8 Flash (Low)</option>
+            <option value="gemini-4-argon-high">Gemini 4 Argon (High)</option>
+            <option value="gemini-4-argon-medium">Gemini 4 Argon (Medium)</option>
+            <option value="gemini-4-argon-low">Gemini 4 Argon (Low)</option>
+            <option value="claude-opus-5-5-high">Claude Opus 5.5 (High)</option>
+            <option value="claude-opus-5-5-medium">Claude Opus 5.5 (Medium)</option>
+            <option value="claude-opus-5-5-low">Claude Opus 5.5 (Low)</option>
+            <option value="claude-sonnet-5-5-high">Claude Sonnet 5.5 (High)</option>
+            <option value="claude-sonnet-5-5-medium">Claude Sonnet 5.5 (Medium)</option>
+            <option value="claude-sonnet-5-5-low">Claude Sonnet 5.5 (Low)</option>
+            <option value="gpt-oss-120b-medium">GPT-OSS 120B (Medium)</option>
+          </select>
+
+          <div class="usage-strip" id="antigravityUsageStrip">
+            <span id="antigravityUsageInfo">No requests yet this session.</span>
+            <button type="button" class="link-btn" id="btnRefreshUsage">Refresh</button>
+          </div>
+
+          <p class="result" id="antigravityResult" role="status"></p>
+          <p class="help">Each reply starts a full <code>agy</code> agent session, so it is slower than a direct API call (about 10-20 s in our check). Use a Gemini or Claude API key above for lower latency.</p>
+        </div>
+
+        <div class="field">
+          <label for="anthropicKey">Claude API key <span id="anthropicState" class="pill"></span></label>
+          <div class="row">
+            <input id="anthropicKey" type="password" placeholder="sk-ant-…" autocomplete="off" spellcheck="false" />
+            <button type="button" class="ghost" data-test="anthropic">Test</button>
+            <button type="button" class="ghost" data-clear="anthropicKey">Remove</button>
+          </div>
+          <label for="anthropicModel" class="small">Model</label>
+          <input id="anthropicModel" type="text" spellcheck="false" />
+          <p class="result" id="anthropicResult" role="status"></p>
+        </div>
+
+        <div class="field">
+          <label for="geminiKey">Gemini API key <span id="geminiState" class="pill"></span></label>
+          <div class="row">
+            <input id="geminiKey" type="password" placeholder="AIza…" autocomplete="off" spellcheck="false" />
+            <button type="button" class="ghost" data-test="gemini">Test</button>
+            <button type="button" class="ghost" data-clear="geminiKey">Remove</button>
+          </div>
+          <label for="geminiModel" class="small">Model</label>
+          <input id="geminiModel" type="text" spellcheck="false" />
+          <p class="result" id="geminiResult" role="status"></p>
+          <p class="help">Voice input (push-to-talk) uses the Gemini key for speech-to-text — the free tier is enough.
+            Get one at aistudio.google.com.</p>
+        </div>
+
+        <div class="field">
+          <label for="openaiKey">OpenAI API key <span id="openaiState" class="pill"></span></label>
+          <div class="row">
+            <input id="openaiKey" type="password" placeholder="sk-…" autocomplete="off" spellcheck="false" />
+            <button type="button" class="ghost" data-test="openai">Test</button>
+            <button type="button" class="ghost" data-clear="openaiKey">Remove</button>
+          </div>
+          <label for="openaiModel" class="small">Model (also powers GPT-Image-1 in Studio)</label>
+          <input id="openaiModel" type="text" spellcheck="false" />
+          <p class="result" id="openaiResult" role="status"></p>
+        </div>
+
+        <div class="field">
+          <label for="deepseekKey">DeepSeek API key <span id="deepseekState" class="pill"></span></label>
+          <div class="row">
+            <input id="deepseekKey" type="password" placeholder="sk-…" autocomplete="off" spellcheck="false" />
+            <button type="button" class="ghost" data-test="deepseek">Test</button>
+            <button type="button" class="ghost" data-clear="deepseekKey">Remove</button>
+          </div>
+          <label for="deepseekModel" class="small">Model (e.g. deepseek-chat, deepseek-reasoner)</label>
+          <input id="deepseekModel" type="text" spellcheck="false" />
+          <p class="result" id="deepseekResult" role="status"></p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Voice & Captions</h2>
+        <label class="switch"><input id="voiceReplies" type="checkbox" /> <span>Read replies out loud</span></label>
+        <label class="switch"><input id="captionsEnabled" type="checkbox" /> <span>Show live captions during
+            speech</span></label>
+        <div class="field">
+          <label for="ttsVoice" class="small">Voice</label>
+          <div class="row">
+            <select id="ttsVoice"></select>
+            <button type="button" class="ghost" id="preview">Preview</button>
+          </div>
+          <label for="ttsRate" class="small">Speed <output id="rateOut"></output></label>
+          <input id="ttsRate" type="range" min="0.7" max="1.6" step="0.05" />
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Hotkeys</h2>
+        <p class="help">Click a shortcut, then press the new keys. Avoid Ctrl+Alt combos if HeyClicky is installed — it
+          grabs those.</p>
+        <div class="keys" id="keys"></div>
+        <div class="row end"><button type="button" class="ghost" id="resetKeys">Reset to defaults</button></div>
+        <p class="help">HeyGuy only sees your screen when you press a hotkey. Nothing is captured in the background, and
+          screenshots are never saved.</p>
+      </section>
+
+      <footer class="bar">
+        <p id="saved" class="saved" role="status"></p>
+        <button type="submit" class="primary">Save</button>
+      </footer>
+    </form>
+  </main>
+  <script src="settings.js"></script>
+</body>
+
+</html>

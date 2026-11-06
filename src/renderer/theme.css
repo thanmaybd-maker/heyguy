@@ -1,0 +1,120 @@
+/* HeyGuy theme: "Notch & paper". A black notch for the system, warm paper cards
+   for content, one strong blue (the buddy's) for action, pastel fills for the rest.
+   Every colour and font used by the UI goes through these tokens. */
+
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("bricolage.woff2") format("woff2-variations");
+  font-weight: 200 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Instrument Sans";
+  src: url("instrument-sans.woff2") format("woff2-variations");
+  font-weight: 400 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Instrument Sans";
+  src: url("instrument-sans-italic.woff2") format("woff2-variations");
+  font-weight: 400 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  --font-display: "Bricolage Grotesque", "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Instrument Sans", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "Cascadia Code", "Cascadia Mono", Consolas, monospace;
+
+  /* the notch / system surface */
+  --shell: #0e0e10;
+  --shell-2: #1b1b1f;
+  --shell-3: #2a2a30;
+  --shell-ink: #f4f1ea;
+  --shell-dim: #a29d93;
+
+  /* paper */
+  --paper: #fffbf4;
+  --paper-2: #f6efe3;
+  --paper-3: #ece2d2;
+  --paper-edge: #e3d8c6;
+  --ink: #1d1b18;
+  --ink-2: #5d564c;
+  --ink-3: #8a8275;
+
+  /* colour */
+  --sky: #2f6bff;
+  --sky-press: #2457d6;
+  --sky-soft: #dbe6ff;
+  --sky-ink: #173a99;
+  --mint: #c6f1d8;
+  --mint-ink: #0f5132;
+  --butter: #ffe48c;
+  --butter-ink: #6b4e00;
+  --blush: #ffd5df;
+  --blush-ink: #8a1c3a;
+  --lilac: #e4dcff;
+  --lilac-ink: #3e2a8c;
+  --tangerine: #ff7a3d;
+  --danger: #d23b3b;
+  --danger-soft: #fde2e0;
+
+  --focus: #2f6bff;
+  --shadow-paper: 0 1px 0 rgba(255, 255, 255, 0.7) inset, 0 12px 32px rgba(32, 22, 8, 0.2), 0 2px 6px rgba(32, 22, 8, 0.12);
+  --shadow-shell: 0 18px 44px rgba(0, 0, 0, 0.45);
+
+  --r-card: 16px;
+  --r-control: 10px;
+  --r-pill: 999px;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --t-fast: 140ms;
+  --t-med: 240ms;
+}
+
+/* shared controls ---------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: var(--r-pill);
+  font: 600 13px/1 var(--font-body);
+  cursor: pointer;
+  background: var(--paper-2);
+  color: var(--ink);
+  transition: background-color var(--t-fast) ease, transform var(--t-fast) ease;
+}
+.btn:hover { background: var(--paper-3); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+.btn-primary { background: var(--sky); color: #fff; }
+.btn-primary:hover { background: var(--sky-press); }
+.btn-mint { background: var(--mint); color: var(--mint-ink); }
+.btn-mint:hover { background: #b4ebcb; }
+.btn-butter { background: var(--butter); color: var(--butter-ink); }
+.btn-butter:hover { background: #ffdb66; }
+.btn-blush { background: var(--blush); color: var(--blush-ink); }
+.btn-blush:hover { background: #ffc4d2; }
+.btn-lilac { background: var(--lilac); color: var(--lilac-ink); }
+.btn-lilac:hover { background: #d8ccff; }
+.btn-dark { background: var(--shell-3); color: var(--shell-ink); }
+.btn-dark:hover { background: #393941; }
+
+:where(button, a, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}

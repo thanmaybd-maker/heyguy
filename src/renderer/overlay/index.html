@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; media-src 'self' mediastream:" />
+    <title>HeyGuy</title>
+    <link rel="stylesheet" href="../shared/theme.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <canvas id="stage" aria-hidden="true"></canvas>
+
+    <section id="notch" class="notch" data-interactive data-mode="rest" data-phase="idle" aria-label="HeyGuy">
+      <button id="notch-pill" class="notch-pill" type="button" aria-expanded="false" aria-controls="notch-panel">
+        <svg class="notch-glyph" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 3.5 8.6 20l2.9-6.4 7-1.9z" /></svg>
+        <span id="notch-line" class="notch-line">HeyGuy</span>
+        <span class="notch-wave" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      </button>
+      <div id="notch-panel" class="notch-panel" inert>
+        <div class="notch-top">
+          <div id="notch-account" class="notch-account">
+            <span class="avatar" aria-hidden="true">G</span>
+            <span class="who"><span id="notch-account-name" class="name">Google account</span><span id="notch-account-meta" class="meta"></span></span>
+          </div>
+          <button class="notch-icon" type="button" data-action="history" title="History" aria-label="History">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 12a9 9 0 1 0 3-6.7L3 8m0-5v5h5m4-1v5l3 2" /></svg>
+          </button>
+          <button class="notch-icon" type="button" data-action="settings" title="Settings" aria-label="Settings">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M19.4 13a7.5 7.5 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.6 7.6 0 0 0-1.7-1L15 3h-4l-.4 2.9a7.6 7.6 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.5 7.5 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.6 7.6 0 0 0 1.7 1L11 21h4l.4-2.9a7.6 7.6 0 0 0 1.7-1l2.5 1 2-3.5ZM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Z" /></svg>
+          </button>
+        </div>
+        <h2 id="notch-greet" class="notch-greet">Evening.</h2>
+        <p id="notch-hint" class="notch-hint"></p>
+
+        <div id="notch-connect" class="notch-connect" hidden>
+          <h3 id="notch-connect-title">Connect your Google account</h3>
+          <p id="notch-connect-body"></p>
+          <button id="notch-connect-btn" class="btn btn-primary google" type="button">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="#fff" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3Z"/><path fill="#fff" opacity=".85" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22Z"/><path fill="#fff" opacity=".7" d="M6.4 14a6 6 0 0 1 0-3.9V7.5H3.1a10 10 0 0 0 0 9.1L6.4 14Z"/><path fill="#fff" opacity=".55" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.5L6.4 10C7.2 7.7 9.4 6 12 6Z"/></svg>
+            Sign in with Google
+          </button>
+        </div>
+
+        <div class="notch-actions">
+          <button class="btn btn-primary" type="button" data-action="explain">Explain my screen</button>
+          <button class="btn btn-butter" type="button" data-action="draw-demo">Show me a 3D jet</button>
+        </div>
+
+        <article id="notch-card" class="paper-card" hidden>
+          <p id="notch-card-q" class="paper-q"></p>
+          <p id="notch-card-a" class="paper-a"></p>
+        </article>
+
+        <pre id="notch-report" class="notch-report" hidden></pre>
+
+        <footer class="notch-foot">
+          <button class="btn btn-dark" type="button" data-action="usage">Plan usage</button>
+          <button class="btn btn-dark" type="button" data-action="sign-out" data-google-only>Switch account</button>
+        </footer>
+      </div>
+    </section>
+
+    <section id="bubble" class="bubble hidden" data-interactive data-state="idle" role="dialog" aria-label="HeyGuy">
+      <header id="bubble-head" class="head">
+        <span class="dot" aria-hidden="true"></span>
+        <span id="status" class="status">HeyGuy</span>
+        <span class="spacer"></span>
+        <button id="btn-snip" class="icon-btn" type="button" title="Circle or box screen area (Ctrl+Shift+D)" aria-label="Highlight area">
+          <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4M9 12h6M12 9v6"/></svg>
+        </button>
+        <button id="btn-workspace" class="icon-btn" type="button" title="History & Workspace" aria-label="History & Workspace">
+          <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>
+        </button>
+        <button id="btn-settings" class="icon-btn" type="button" title="Settings" aria-label="Settings">
+          <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M19.4 13a7.5 7.5 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.6 7.6 0 0 0-1.7-1L15 3h-4l-.4 2.9a7.6 7.6 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.5 7.5 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.6 7.6 0 0 0 1.7 1L11 21h4l.4-2.9a7.6 7.6 0 0 0 1.7-1l2.5 1 2-3.5ZM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Z"/></svg>
+        </button>
+        <button id="btn-close" class="icon-btn" type="button" title="Close" aria-label="Close">
+          <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </header>
+      <p id="you" class="you hidden"></p>
+      <div id="reply" class="reply" aria-live="polite" data-tone="normal"></div>
+      <form id="ask-form" class="ask hidden" autocomplete="off">
+        <input id="ask-input" type="text" placeholder="Ask about your screen…" aria-label="Your question" maxlength="2000" />
+        <button type="submit" class="send">Ask</button>
+      </form>
+    </section>
+
+
+    <section id="scene-panel" class="scene-panel hidden" data-interactive role="dialog" aria-labelledby="scene-title">
+      <header id="scene-head" class="scene-head">
+        <span id="scene-title" class="scene-title">Scene</span>
+        <span id="scene-status" class="scene-status" role="status"></span>
+        <span class="spacer"></span>
+        <span class="only-3d">
+          <button id="scene-explode" class="chip" type="button" aria-pressed="false" title="Pull the parts apart">Explode</button>
+          <button id="scene-labels" class="chip" type="button" aria-pressed="false" title="Show every label">Labels</button>
+        </span>
+        <button id="scene-close" class="icon-btn" type="button" title="Close" aria-label="Close scene">
+          <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </header>
+      <div id="scene-body" class="scene-body"></div>
+      <div id="scene-detail" class="scene-detail hidden" aria-live="polite">
+        <div class="scene-detail-head">
+          <strong id="scene-detail-label"></strong>
+          <button id="scene-clear" class="link-btn" type="button">Clear</button>
+        </div>
+        <p id="scene-detail-text"></p>
+        <p id="scene-ask-hint" class="scene-hint"></p>
+      </div>
+      <footer class="scene-foot">
+        <span class="steps-only">
+          <button id="scene-prev" class="icon-btn" type="button" aria-label="Previous step">
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M15 5 8 12l7 7"/></svg>
+          </button>
+          <button id="scene-play" class="icon-btn" type="button" aria-label="Play steps">
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+          </button>
+          <button id="scene-next" class="icon-btn" type="button" aria-label="Next step">
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m9 5 7 7-7 7"/></svg>
+          </button>
+        </span>
+        <span id="scene-caption" class="scene-caption"></span>
+      </footer>
+    </section>
+
+    <div id="live-captions" class="live-captions hidden" data-interactive aria-live="polite">
+      <span class="captions-badge">Live</span>
+      <span id="captions-text" class="captions-text"></span>
+    </div>
+
+    <script src="overlay.js"></script>
+  </body>
+</html>

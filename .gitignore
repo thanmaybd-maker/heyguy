@@ -1,0 +1,9 @@
+node_modules/
+dist/
+dist-test/
+release/
+.env
+*.log
+_to_delete/
+*.tgz
+

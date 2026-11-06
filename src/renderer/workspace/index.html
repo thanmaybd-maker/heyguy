@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:" />
+    <title>HeyGuy Workspace & Studio</title>
+    <link rel="stylesheet" href="workspace.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <header class="sidebar-head">
+          <div class="brand">
+            <span class="dot"></span>
+            <h1>History</h1>
+          </div>
+          <button id="btn-new-session" class="btn-new" type="button" title="Start new conversation">+ New</button>
+        </header>
+
+        <div class="search-box">
+          <input id="search-input" type="search" placeholder="Search conversations…" autocomplete="off" spellcheck="false" />
+        </div>
+
+        <div class="nav-tabs">
+          <button id="tab-chats" class="tab-btn active" type="button">Chats</button>
+          <button id="tab-studio" class="tab-btn" type="button">Studio</button>
+          <button id="tab-jobs" class="tab-btn" type="button">Jobs</button>
+          <button id="tab-artifacts" class="tab-btn" type="button">Artifacts</button>
+          <button id="tab-routines" class="tab-btn" type="button">Routines</button>
+          <button id="tab-memory" class="tab-btn" type="button">Memory</button>
+        </div>
+
+        <div id="session-list" class="session-list" role="listbox" aria-label="Past conversations"></div>
+        <div id="studio-list" class="session-list hidden" role="listbox" aria-label="Instant Studio templates"></div>
+        <div id="jobs-list" class="session-list hidden" role="listbox" aria-label="Background jobs"></div>
+        <div id="artifacts-list" class="session-list hidden" role="listbox" aria-label="Saved artifacts"></div>
+        <div id="routines-list" class="session-list hidden" role="listbox" aria-label="Scheduled routines"></div>
+        <div id="memory-list" class="session-list hidden" role="listbox" aria-label="User preferences and memory"></div>
+      </aside>
+
+      <main class="content">
+        <header class="content-head">
+          <div class="session-meta">
+            <h2 id="active-title">Select a conversation</h2>
+            <span id="active-stats" class="badge"></span>
+          </div>
+          <div class="actions">
+            <div class="assistant-selector">
+              <label for="select-assistant">Assistant:</label>
+              <select id="select-assistant" class="assistant-dropdown"></select>
+            </div>
+            <button id="btn-delete-session" class="btn-danger" type="button" title="Delete conversation">Delete</button>
+          </div>
+        </header>
+
+        <div id="messages-container" class="messages-container" role="log" aria-live="polite">
+          <div class="empty-state" id="empty-state">
+            <p>Select a conversation from the sidebar or press your talk hotkey to begin chatting.</p>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="workspace.js"></script>
+  </body>
+</html>
+
